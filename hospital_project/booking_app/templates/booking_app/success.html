@@ -1,0 +1,13 @@
+{% extends "booking_app/base.html" %}
+
+{% block title %}Booking Successful{% endblock %}
+
+{% block content %}
+<div class="alert alert-success mt-5" role="alert">
+    <h4 class="alert-heading">Booking Confirmed!</h4>
+    <p>Your diagnostic test has been successfully scheduled. You will receive a confirmation shortly.</p>
+    <hr>
+    <p class="mb-0">Thank you for using the Hospital Booking System.</p>
+</div>
+<a href="{% url 'book_test' %}" class="btn btn-primary mt-3">Book Another Test</a>
+{% endblock %}
