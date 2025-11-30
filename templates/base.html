@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediBook Pro - Hospital Diagnostic Scheduling</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a76d2;
+            --primary-dark: #1565c0;
+            --primary-light: #42a5f5;
+            --secondary: #4db6ac;
+            --success: #2e7d32;
+            --warning: #f57c00;
+            --danger: #d32f2f;
+            --light: #f5f7fa;
+            --dark: #263238;
+            --gray: #607d8b;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+        
+        /* Navbar Styling */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* User Dropdown */
+        .user-dropdown .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-dropdown .dropdown-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        /* Auth Buttons */
+        .auth-buttons .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            margin-left: 0.5rem;
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.7);
+        }
+        
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: white;
+        }
+        
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* Button Styling */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(26, 118, 210, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Form Styling */
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(26, 118, 210, 0.15);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        /* Table Styling */
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px #e0e0e0;
+        }
+        
+        .table thead th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #f0f0f0;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(26, 118, 210, 0.04);
+        }
+        
+        /* Alert Styling */
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+        }
+        
+        .alert-success {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+        
+        .alert-danger {
+            background-color: rgba(211, 47, 47, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .alert-warning {
+            background-color: rgba(245, 124, 0, 0.1);
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .alert-info {
+            background-color: rgba(26, 118, 210, 0.1);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        
+        /* Badge Styling */
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        /* Search & Filter */
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .search-box .form-control {
+            padding-left: 45px;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        /* Utility Classes */
+        .text-primary { color: var(--primary) !important; }
+        .bg-primary { background-color: var(--primary) !important; }
+        
+        /* Status Indicators */
+        .status-badge {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-confirmed { background-color: var(--success); }
+        .status-pending { background-color: var(--warning); }
+        .status-cancelled { background-color: var(--danger); }
+        .status-completed { background-color: var(--secondary); }
+        
+        /* Role Badges */
+        .role-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .badge-patient { background-color: var(--secondary); }
+        .badge-receptionist { background-color: var(--warning); }
+        .badge-admin { background-color: var(--danger); }
+        
+        /* Quick Actions */
+        .quick-actions .btn {
+            margin: 0.25rem;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .auth-buttons .btn {
+                margin: 0.25rem 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'booking_list' %}">
+                <i class="fas fa-hospital-alt"></i>
+                MediBook Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- Navigation items for all authenticated users -->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'booking_list' %}">
+                            <i class="fas fa-calendar-check me-1"></i>Appointments
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Admin/Staff navigation items -->
+                    {% if user.is_authenticated and user.userprofile.role in 'ADMIN,RECEPTIONIST' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'patient_list' %}">
+                            <i class="fas fa-users me-1"></i>Patients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'time_slot_list' %}">
+                            <i class="fas fa-clock me-1"></i>Time Slots
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Admin only navigation items -->
+                    {% if user.is_authenticated and user.userprofile.role == 'ADMIN' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_settings' %}">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <!-- Patient navigation items -->
+                    {% if user.is_authenticated and user.userprofile.role == 'PATIENT' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'patient_profile' %}">
+                            <i class="fas fa-user me-1"></i>My Profile
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Authentication Section -->
+                <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                    <!-- User is logged in -->
+                    <div class="user-dropdown">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar" id="userAvatar">
+                                    {% if user.get_full_name %}
+                                        {{ user.get_full_name|first|upper }}
+                                    {% else %}
+                                        {{ user.username|first|upper }}
+                                    {% endif %}
+                                </div>
+                                <span>{{ user.get_full_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down ms-1"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <span class="dropdown-item-text">
+                                        <small>
+                                            <span class="badge 
+                                                {% if user.userprofile.role == 'PATIENT' %}badge-patient
+                                                {% elif user.userprofile.role == 'RECEPTIONIST' %}badge-receptionist
+                                                {% else %}badge-admin{% endif %}">
+                                                {{ user.userprofile.role }}
+                                            </span>
+                                        </small>
+                                    </span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                
+                                {% if user.userprofile.role == 'PATIENT' %}
+                                <li><a class="dropdown-item" href="{% url 'patient_profile' %}"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                                {% endif %}
+                                
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; width: 100%; text-align: left;">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- User is not logged in -->
+                    <div class="auth-buttons">
+                        <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
+                        <a href="{% url 'register' %}" class="btn btn-light">Register</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mt-4">
+        <!-- Alert Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas 
+                            {% if message.tags == 'success' %}fa-check-circle
+                            {% elif message.tags == 'danger' %}fa-exclamation-circle
+                            {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                            {% else %}fa-info-circle{% endif %} me-2"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Quick Actions for Staff -->
+        {% if user.is_authenticated and user.userprofile.role in 'ADMIN,RECEPTIONIST' %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-block  flex-wrap align-items-center quick-actions">
+
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createBookingModal">
+                                <i class="fas fa-calendar-plus me-1"></i>New Booking
+                            </button>
+                            {% if user.userprofile.role == 'ADMIN' %}
+                            <a href="{% url 'time_slot_list' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-clock me-1"></i>Manage Time Slots
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Page Content -->
+        {% block content %}
+        <!-- Content will be injected here from child templates -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-hospital-alt me-2"></i>MediBook Pro</h5>
+                    <p>Streamlining hospital diagnostic scheduling for better patient care and efficient resource management.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'booking_list' %}" class="text-light">Appointments</a></li>
+                        {% if user.is_authenticated and user.userprofile.role == 'PATIENT' %}
+                        <li><a href="{% url 'patient_profile' %}" class="text-light">My Profile</a></li>
+                        {% endif %}
+                        {% if user.is_authenticated and user.userprofile.role in 'ADMIN,RECEPTIONIST' %}
+                        <li><a href="{% url 'dashboard' %}" class="text-light">Dashboard</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-phone me-2"></i> (07) 1234 5678</li>
+                        <li><i class="fas fa-envelope me-2"></i> info@medibook.com</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Health St, Medical City</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2024 MediBook Pro Hospital System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Add active class to current page navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set active nav link based on current URL
+            const currentUrl = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentUrl) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Auto-dismiss alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+
+            // Add today's date as min date for date inputs
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.getAttribute('min')) {
+                    input.setAttribute('min', today);
+                }
+                // Set max date to 30 days from today
+                const maxDate = new Date();
+                maxDate.setDate(maxDate.getDate() + 30);
+                const maxDateStr = maxDate.toISOString().split('T')[0];
+                input.setAttribute('max', maxDateStr);
+            });
+
+            // Generate better initials for user avatar
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                const userName = '{{ user.get_full_name|default:user.username }}';
+                const words = userName.split(' ');
+                let initials = '';
+                if (words.length >= 2) {
+                    initials = words[0][0] + words[words.length - 1][0];
+                } else {
+                    initials = userName.substring(0, 2);
+                }
+                userAvatar.textContent = initials.toUpperCase();
+            }
+
+            // Time validation for time inputs
+            document.querySelectorAll('input[type="time"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    const time = this.value;
+                    if (time) {
+                        const [hours, minutes] = time.split(':').map(Number);
+                        if (hours < 8 || hours > 17 || (hours === 17 && minutes > 0)) {
+                            alert('Booking time must be between 08:00 and 17:00.');
+                            this.value = '';
+                        }
+                    }
+                });
+            });
+        });
+
+        // Function to format date for display
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Function to format time for display
+        function formatTime(timeString) {
+            return timeString.substring(0, 5); // Remove seconds if present
+        }
+    </script>
+    
+    {% block extra_scripts %}
+    <!-- Additional scripts can be added by child templates -->
+    {% endblock %}
+</body>
+</html>

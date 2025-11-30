@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="fas fa-undo me-2"></i>Restore Booking</h4>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-undo fa-4x text-success mb-3"></i>
+                <h5>Restore this cancelled booking?</h5>
+                
+                <div class="card mt-4">
+                    <div class="card-body text-start">
+                        <p><strong>Patient:</strong> {{ booking.patient.name }}</p>
+                        <p><strong>Test:</strong> {{ booking.test.name }}</p>
+                        <p><strong>Date:</strong> {{ booking.booking_date }}</p>
+                        <p><strong>Time:</strong> {{ booking.booking_time }}</p>
+                        <p><strong>Hospital:</strong> {{ booking.hospital_name }}</p>
+                    </div>
+                </div>
+                
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="mb-3 form-check">
+                        {{ form.confirm }}
+                        <label class="form-check-label" for="{{ form.confirm.id_for_label }}">
+                            Confirm restoration
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-undo me-2"></i>Yes, Restore Booking
+                    </button>
+                    <a href="{% url 'booking_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-cogs me-2"></i>Admin Settings</h2>
+            <span class="badge bg-primary fs-6">Administrator</span>
+        </div>
+    </div>
+</div>
+
+<!-- System Overview Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_users }}</h4>
+                        <p class="mb-0">Total Users</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_patients }}</h4>
+                        <p class="mb-0">Patients</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-injured fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_bookings }}</h4>
+                        <p class="mb-0">Total Bookings</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-check fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_tests }}</h4>
+                        <p class="mb-0">Available Tests</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-vial fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- System Settings -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>System Settings</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_system_settings">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Maximum Booking Days Ahead</label>
+                        <input type="number" name="max_booking_days" class="form-control" value="30" min="1" max="90">
+                        <small class="text-muted">How many days in advance patients can book appointments</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Business Hours Start</label>
+                                <input type="time" name="business_hours_start" class="form-control" value="08:00">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Business Hours End</label>
+                                <input type="time" name="business_hours_end" class="form-control" value="17:00">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Default Appointment Duration (minutes)</label>
+                        <input type="number" name="default_duration" class="form-control" value="30" min="15" max="120" step="15">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-save me-2"></i>Update System Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-user-shield me-2"></i>User Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>User Distribution by Role</h6>
+                    {% for role in user_roles %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>
+                            <span class="badge 
+                                {% if role.role == 'ADMIN' %}bg-danger
+                                {% elif role.role == 'RECEPTIONIST' %}bg-warning
+                                {% else %}bg-success{% endif %}">
+                                {{ role.role }}
+                            </span>
+                        </span>
+                        <strong>{{ role.count }} users</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="#" class="btn btn-outline-info w-100">
+                    <i class="fas fa-user-cog me-2"></i>Manage Users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Maintenance -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-tools me-2"></i>System Maintenance</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> These actions affect system data and cannot be undone.
+                </div>
+
+                <!-- Cleanup Actions -->
+                <form method="post" action="{% url 'system_maintenance' %}" class="mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="cleanup_cancelled_bookings">
+                    <button type="submit" class="btn btn-outline-danger w-100 mb-2" 
+                            onclick="return confirm('This will permanently delete cancelled bookings older than 30 days. Continue?')">
+                        <i class="fas fa-trash me-2"></i>Cleanup Old Cancelled Bookings
+                    </button>
+                </form>
+
+                <form method="post" action="{% url 'system_maintenance' %}" class="mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="clear_old_slots">
+                    <button type="submit" class="btn btn-outline-warning w-100 mb-2"
+                            onclick="return confirm('This will clear all time slots from past dates. Continue?')">
+                        <i class="fas fa-broom me-2"></i>Clear Old Time Slots
+                    </button>
+                </form>
+
+                <form method="post" action="{% url 'system_maintenance' %}" class="mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="regenerate_next_month_slots">
+                    <button type="submit" class="btn btn-outline-info w-100 mb-2"
+                            onclick="return confirm('This will generate time slots for the next month. Continue?')">
+                        <i class="fas fa-calendar-plus me-2"></i>Generate Next Month Time Slots
+                    </button>
+                </form>
+
+                <!-- Data Management -->
+                <form method="post" action="{% url 'system_maintenance' %}" class="mb-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="generate_sample_data">
+                    <button type="submit" class="btn btn-outline-secondary w-100 mb-2"
+                            onclick="return confirm('This will create sample test data. Continue?')">
+                        <i class="fas fa-database me-2"></i>Generate Sample Test Data
+                    </button>
+                </form>
+
+                <form method="post" action="{% url 'system_maintenance' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="export_system_data">
+                    <button type="submit" class="btn btn-outline-success w-100">
+                        <i class="fas fa-download me-2"></i>Export System Data
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card mt-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                <h6>Latest Bookings</h6>
+                {% if recent_bookings %}
+                <div class="list-group list-group-flush">
+                    {% for booking in recent_bookings|slice:":3" %}
+                    <div class="list-group-item px-0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <small>{{ booking.patient.name }}</small>
+                            <small class="text-muted">{{ booking.created_at|timesince }} ago</small>
+                        </div>
+                        <small class="text-muted">{{ booking.test.name }} - {{ booking.booking_date }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No recent activity</p>
+                {% endif %}
+
+                <h6 class="mt-3">New Patients</h6>
+                {% if recent_patients %}
+                <div class="list-group list-group-flush">
+                    {% for patient in recent_patients|slice:":3" %}
+                    <div class="list-group-item px-0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <small>{{ patient.name }}</small>
+                            <small class="text-muted">{{ patient.created_at|timesince }} ago</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No new patients</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Danger Zone -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-radiation me-2"></i>
+                    <strong>Extreme Caution:</strong> These actions are irreversible and may affect system stability.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-danger w-100" disabled>
+                            <i class="fas fa-database me-2"></i>Reset Database
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-danger w-100" disabled>
+                            <i class="fas fa-users me-2"></i>Delete All Users
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-danger w-100" disabled>
+                            <i class="fas fa-calendar-times me-2"></i>Cancel All Bookings
+                        </button>
+                    </div>
+                </div>
+                <small class="text-muted mt-2 d-block">These features are disabled in the demo version.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

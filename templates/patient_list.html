@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-users me-2"></i>Patient Management</h2>
+            <div class="d-flex gap-2">
+                <span class="badge bg-primary fs-6">{{ total_patients }} patient{{ total_patients|pluralize }}</span>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPatientModal">
+                    <i class="fas fa-user-plus me-2"></i>Add Patient
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-8">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Search patients by name, contact number, or email..." 
+                                   value="{{ search_query }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patients List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>All Patients</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if patients %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Contact Information</th>
+                                <th>Registration</th>
+                                <th>Appointments</th>
+                                <th>Last Booking</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-3">
+                                            {{ patient.name|first|upper }}
+                                        </div>
+                                        <div>
+                                            <strong class="d-block">{{ patient.name }}</strong>
+                                            <small class="text-muted">Age: {{ patient.age }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>📞 {{ patient.contact_number }}</strong>
+                                        {% if patient.email %}
+                                        <br>
+                                        <small class="text-muted">✉️ {{ patient.email }}</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ patient.created_at|date:"M d, Y" }}
+                                        <br>
+                                        <span class="badge bg-{% if patient.user %}success{% else %}secondary{% endif %}">
+                                            {% if patient.user %}Linked Account{% else %}No Account{% endif %}
+                                        </span>
+                                    </small>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span class="badge bg-primary">{{ patient.total_bookings }} total</span>
+                                        {% if patient.upcoming_bookings > 0 %}
+                                        <span class="badge bg-success">{{ patient.upcoming_bookings }} upcoming</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if patient.last_booking %}
+                                    <small>
+                                        {{ patient.last_booking.booking_date }}<br>
+                                        <span class="badge bg-{% if patient.last_booking.status == 'COMPLETED' %}success{% elif patient.last_booking.status == 'PENDING' %}warning{% else %}danger{% endif %}">
+                                            {{ patient.last_booking.status }}
+                                        </span>
+                                    </small>
+                                    {% else %}
+                                    <span class="text-muted">No bookings</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Active
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" title="Edit Patient">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success" title="Book Appointment">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No patients found</h5>
+                    <p class="text-muted">
+                        {% if search_query %}
+                            No patients match your search criteria.
+                        {% else %}
+                            No patients have been registered yet.
+                        {% endif %}
+                    </p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPatientModal">
+                        <i class="fas fa-user-plus me-2"></i>Add First Patient
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Patient Modal - REUSING EXISTING FORM -->
+<div class="modal fade" id="createPatientModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Add New Patient</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'create_patient' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <!-- REUSE: Existing PatientForm fields -->
+                    <div class="mb-3">
+                        <label class="form-label">Full Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Age *</label>
+                                {{ form.age }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Contact Number *</label>
+                                {{ form.contact_number }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        {{ form.email }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Patient</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.table td {
+    vertical-align: middle;
+}
+</style>
+{% endblock %}

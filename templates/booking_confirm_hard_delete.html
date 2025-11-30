@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Permanently Delete Booking</h4>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-trash fa-4x text-danger mb-3"></i>
+                <h5 class="text-danger">Warning: This action cannot be undone!</h5>
+                
+                <div class="card mt-4 border-danger">
+                    <div class="card-body text-start">
+                        <p><strong>Patient:</strong> {{ booking.patient.name }}</p>
+                        <p><strong>Test:</strong> {{ booking.test.name }}</p>
+                        <p><strong>Date:</strong> {{ booking.booking_date }}</p>
+                        <p><strong>Time:</strong> {{ booking.booking_time }}</p>
+                        <p><strong>Hospital:</strong> {{ booking.hospital_name }}</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-danger mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This will permanently delete the booking record from the database. This action cannot be reversed.
+                </div>
+                
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Yes, Delete Permanently
+                    </button>
+                </form>
+                <a href="{% url 'booking_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>No, Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

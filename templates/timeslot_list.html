@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-clock me-2"></i>Time Slot Management</h2>
+            {% if user.userprofile.role == 'ADMIN' %}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generateSlotsModal">
+                <i class="fas fa-plus me-2"></i>Generate Time Slots
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Info Alert for Receptionists -->
+{% if user.userprofile.role == 'RECEPTIONIST' %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Receptionist View:</strong> You can view available time slots to help with booking appointments. 
+    Only administrators can generate new time slots.
+</div>
+{% endif %}
+
+<!-- Filters -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Hospital</label>
+                        <input type="text" name="hospital" class="form-control" 
+                               placeholder="Filter by hospital..." value="{{ hospital_filter }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Availability</label>
+                        <select name="available" class="form-select">
+                            <option value="">All</option>
+                            <option value="available" {% if available_filter == 'available' %}selected{% endif %}>Available</option>
+                            <option value="booked" {% if available_filter == 'booked' %}selected{% endif %}>Booked</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Time Slots Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Time Slots</h5>
+                <span class="badge bg-primary">
+                    {{ time_slots.count }} slot{{ time_slots.count|pluralize }}
+                    ({{ time_slots|length }} shown)
+                </span>
+            </div>
+            <div class="card-body p-0">
+                {% if time_slots %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Hospital</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Booking</th>
+                                {% if user.userprofile.role == 'RECEPTIONIST' %}
+                                <th>Quick Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for slot in time_slots %}
+                            <tr>
+                                <td>
+                                    <strong>{{ slot.hospital_name }}</strong>
+                                </td>
+                                <td>
+                                    <strong>{{ slot.slot_date }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ slot.slot_date|date:"D" }}</small>
+                                </td>
+                                <td>
+                                    <strong>{{ slot.slot_time }}</strong>
+                                </td>
+                                <td>{{ slot.duration }} mins</td>
+                                <td>
+                                    <span class="badge {% if slot.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                                        {% if slot.is_available %}
+                                            <i class="fas fa-check me-1"></i>Available
+                                        {% else %}
+                                            <i class="fas fa-times me-1"></i>Booked
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if slot.booking %}
+                                        <div>
+                                            <strong>{{ slot.booking.patient.name }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ slot.booking.test.name }}</small>
+                                            <br>
+                                            <span class="badge bg-{% if slot.booking.status == 'COMPLETED' %}success{% elif slot.booking.status == 'PENDING' %}warning{% else %}danger{% endif %}">
+                                                {{ slot.booking.status }}
+                                            </span>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                {% if user.userprofile.role == 'RECEPTIONIST' %}
+                                <td>
+                                    {% if slot.is_available %}
+                                    <button type="button" class="btn btn-success btn-sm" 
+                                            onclick="useTimeSlot('{{ slot.hospital_name }}', '{{ slot.slot_date }}', '{{ slot.slot_time }}')"
+                                            title="Use this slot for new booking">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </button>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No time slots found</h5>
+                    <p class="text-muted">
+                        {% if hospital_filter or date_filter or available_filter %}
+                            Try adjusting your filters
+                        {% else %}
+                            No time slots have been generated yet.
+                        {% endif %}
+                    </p>
+                    {% if user.userprofile.role == 'ADMIN' %}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generateSlotsModal">
+                        <i class="fas fa-plus me-2"></i>Generate Time Slots
+                    </button>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Generate Slots Modal (Admin Only) -->
+{% if user.userprofile.role == 'ADMIN' %}
+<div class="modal fade" id="generateSlotsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-plus me-2"></i>Generate Time Slots</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'generate_time_slots' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Hospital Name</label>
+                        <input type="text" name="hospital_name" class="form-control" required 
+                               placeholder="Enter hospital name">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" name="start_date" class="form-control" required 
+                                       min="{{ today|date:'Y-m-d' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" name="end_date" class="form-control" required 
+                                       min="{{ today|date:'Y-m-d' }}" 
+                                       max="{{ max_date|date:'Y-m-d' }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This will generate 30-minute time slots from 8:00 AM to 5:00 PM for each day.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Generate Slots</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+// Function to use a time slot for new booking
+function useTimeSlot(hospital, date, time) {
+    // Store the slot details in sessionStorage to use in booking form
+    sessionStorage.setItem('prefilledHospital', hospital);
+    sessionStorage.setItem('prefilledDate', date);
+    sessionStorage.setItem('prefilledTime', time);
+    
+    // Redirect to booking list page and trigger booking modal
+    window.location.href = "{% url 'booking_list' %}";
+}
+
+// When page loads, check if we need to auto-open booking modal
+document.addEventListener('DOMContentLoaded', function() {
+    const prefilledHospital = sessionStorage.getItem('prefilledHospital');
+    const prefilledDate = sessionStorage.getItem('prefilledDate');
+    const prefilledTime = sessionStorage.getItem('prefilledTime');
+    
+    if (prefilledHospital && prefilledDate && prefilledTime) {
+        // Clear the stored values
+        sessionStorage.removeItem('prefilledHospital');
+        sessionStorage.removeItem('prefilledDate');
+        sessionStorage.removeItem('prefilledTime');
+        
+        // Show a message that slot details are ready to use
+        alert(`Time slot selected:\nHospital: ${prefilledHospital}\nDate: ${prefilledDate}\nTime: ${prefilledTime}\n\nGo to "New Booking" to use this slot.`);
+    }
+    
+    // Set min/max dates for date inputs
+    const today = new Date().toISOString().split('T')[0];
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 30);
+    const maxDateStr = maxDate.toISOString().split('T')[0];
+    
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        if (!input.getAttribute('min')) {
+            input.setAttribute('min', today);
+        }
+        if (!input.getAttribute('max')) {
+            input.setAttribute('max', maxDateStr);
+        }
+    });
+});
+</script>
+
+<style>
+.table td {
+    vertical-align: middle;
+}
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Cancel Booking</h4>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-times fa-4x text-warning mb-3"></i>
+                <h5>Are you sure you want to cancel this booking?</h5>
+                
+                <div class="card mt-4">
+                    <div class="card-body text-start">
+                        <p><strong>Patient:</strong> {{ booking.patient.name }}</p>
+                        <p><strong>Test:</strong> {{ booking.test.name }}</p>
+                        <p><strong>Date:</strong> {{ booking.booking_date }}</p>
+                        <p><strong>Time:</strong> {{ booking.booking_time }}</p>
+                        <p><strong>Hospital:</strong> {{ booking.hospital_name }}</p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    This action will mark the booking as cancelled but keep it in the system for records.
+                </div>
+                
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times me-2"></i>Yes, Cancel Booking
+                    </button>
+                </form>
+                <a href="{% url 'booking_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>No, Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
