@@ -1,0 +1,66 @@
+{% extends 'booking/admin_base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Admin Dashboard</h2>
+    <div>
+        <a href="{% url 'booking_list' %}" class="btn btn-custom me-2">View All Bookings</a>
+        <a href="{% url 'patient_list' %}" class="btn btn-custom me-2">View All Patients</a>
+        <a href="{% url 'test_list' %}" class="btn btn-custom">View All Tests</a>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-3 shadow">
+            <h5>Quick Actions</h5>
+            <div class="d-flex gap-2">
+                <a href="{% url 'add_booking' %}" class="btn btn-custom">Add New Booking</a>
+                <a href="{% url 'add_patient' %}" class="btn btn-custom">Add New Patient</a>
+                <a href="{% url 'add_test' %}" class="btn btn-custom">Add New Test</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 shadow text-center">
+            <h4>Total Bookings</h4>
+            <h2 class="text-primary">{{ total_bookings }}</h2>
+            <a href="{% url 'booking_list' %}" class="btn btn-outline-primary btn-sm">View Details</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 shadow text-center">
+            <h4>Total Patients</h4>
+            <h2 class="text-success">{{ total_patients }}</h2>
+            <a href="{% url 'patient_list' %}" class="btn btn-outline-success btn-sm">View Details</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 shadow text-center">
+            <h4>Total Tests</h4>
+            <h2 class="text-info">{{ total_tests }}</h2>
+            <a href="{% url 'test_list' %}" class="btn btn-outline-info btn-sm">View Details</a>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card p-3 shadow">
+            <h5>Recent Activity</h5>
+            <p class="text-muted">Dashboard overview and recent updates will appear here.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

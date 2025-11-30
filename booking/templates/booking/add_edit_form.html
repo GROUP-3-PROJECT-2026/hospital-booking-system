@@ -1,0 +1,16 @@
+{% extends 'booking/admin_base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ form_title }}</h2>
+    <form method="POST" class="mt-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-custom">{{ button_text }}</button>
+        <a href="{% if 'Booking' in form_title %}{% url 'booking_list' %}
+                 {% elif 'Patient' in form_title %}{% url 'patient_list' %}
+                 {% elif 'Test' in form_title %}{% url 'test_list' %}{% endif %}" 
+           class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

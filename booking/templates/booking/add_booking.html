@@ -1,0 +1,356 @@
+{% extends 'booking/admin_base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ form_title }}</h2>
+    <a href="{% url 'booking_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Bookings
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calendar-plus"></i> {{ form_title }}
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.patient.id_for_label }}" class="form-label">
+                                <i class="fas fa-user"></i> Patient *
+                            </label>
+                            <div class="input-group">
+                                {{ form.patient }}
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">
+                                    <i class="fas fa-plus"></i> Quick Add
+                                </button>
+                            </div>
+                            {% if form.patient.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.patient.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.test.id_for_label }}" class="form-label">
+                                <i class="fas fa-vial"></i> Test *
+                            </label>
+                            {{ form.test }}
+                            {% if form.test.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.test.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.date.id_for_label }}" class="form-label">
+                                <i class="fas fa-calendar"></i> Appointment Date *
+                            </label>
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.date.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.time.id_for_label }}" class="form-label">
+                                <i class="fas fa-clock"></i> Appointment Time *
+                            </label>
+                            {{ form.time }}
+                            {% if form.time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.time.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.hospital_name.id_for_label }}" class="form-label">
+                                <i class="fas fa-hospital"></i> Hospital Name *
+                            </label>
+                            {{ form.hospital_name }}
+                            {% if form.hospital_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.hospital_name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <a href="{% url 'booking_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> {{ button_text }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        padding: 1.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+    }
+    
+    .invalid-feedback {
+        font-size: 0.875rem;
+        color: #dc3545;
+    }
+    
+    .alert {
+        border-radius: 8px;
+        border: none;
+    }
+</style>
+
+<script>
+    // Bootstrap validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+
+<!-- Quick Add Patient Modal -->
+<div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addPatientModalLabel">
+                    <i class="fas fa-user-plus"></i> Quick Add Patient
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="quickAddPatientForm">
+                    <div class="mb-3">
+                        <label for="quickPatientName" class="form-label">
+                            <i class="fas fa-user"></i> Full Name *
+                        </label>
+                        <input type="text" class="form-control" id="quickPatientName" name="name" required>
+                        <div class="invalid-feedback">Please enter a patient name.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="quickPatientAge" class="form-label">
+                            <i class="fas fa-calendar"></i> Age *
+                        </label>
+                        <input type="number" class="form-control" id="quickPatientAge" name="age" required min="1" max="150">
+                        <div class="invalid-feedback">Please enter a valid age.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="quickPatientContact" class="form-label">
+                            <i class="fas fa-phone"></i> Contact Number *
+                        </label>
+                        <input type="text" class="form-control" id="quickPatientContact" name="contact_number" required>
+                        <div class="invalid-feedback">Please enter a contact number.</div>
+                    </div>
+                    
+                    <div id="quickAddPatientAlert"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="saveQuickPatientBtn">
+                    <i class="fas fa-save"></i> Save Patient
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('addPatientModal');
+    const form = document.getElementById('quickAddPatientForm');
+    const saveBtn = document.getElementById('saveQuickPatientBtn');
+    const alertDiv = document.getElementById('quickAddPatientAlert');
+    const patientSelect = document.getElementById('id_patient');
+    
+    // Handle save button click
+    saveBtn.addEventListener('click', async function() {
+        // Clear previous alerts
+        alertDiv.innerHTML = '';
+        
+        // Validate form
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+        
+        // Disable save button and show loading
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        
+        try {
+            // Collect form data
+            const formData = new FormData(form);
+            const patientData = {
+                name: formData.get('name'),
+                age: formData.get('age'),
+                contact_number: formData.get('contact_number')
+            };
+            
+            // Send AJAX request
+            const response = await fetch('/admin/ajax/create-patient/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(patientData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Show success message
+                alertDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> ' + result.message + '</div>';
+                
+                // Add new patient to dropdown
+                const newOption = new Option(result.patient.name, result.patient.id);
+                patientSelect.add(newOption);
+                patientSelect.value = result.patient.id;
+                
+                // Close modal after delay
+                setTimeout(() => {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    modalInstance.hide();
+                    
+                    // Reset form
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    alertDiv.innerHTML = '';
+                    
+                    // Reset save button
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Patient';
+                }, 1500);
+                
+            } else {
+                // Show error message
+                alertDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> ' + result.message + '</div>';
+                
+                // Reset save button
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Patient';
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alertDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> An error occurred. Please try again.</div>';
+            
+            // Reset save button
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Patient';
+        }
+    });
+    
+    // Reset form when modal is hidden
+    modal.addEventListener('hidden.bs.modal', function() {
+        form.reset();
+        form.classList.remove('was-validated');
+        alertDiv.innerHTML = '';
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Patient';
+    });
+    
+    // Function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+
+{% endblock %}
