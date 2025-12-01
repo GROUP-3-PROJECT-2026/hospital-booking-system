@@ -19,9 +19,9 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 urlpatterns = [
-    path('', lambda request: redirect('/admin/')),
+    path('', lambda request: redirect('/admin-django/')),  # Redirect to Django admin by default
     path('admin-django/', admin.site.urls),  
-    path('admin/', include('booking.urls')),
+    path('admin/', include('booking.urls')),  # Custom booking admin
     
     # User interface URLs
     path('user/', include('booking.urls')),

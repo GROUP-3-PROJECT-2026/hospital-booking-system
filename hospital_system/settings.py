@@ -128,5 +128,5 @@ AUTHENTICATION_BACKENDS = [
 
 # Login/Logout settings
 LOGIN_URL = '/admin/login/'
-LOGIN_REDIRECT_URL = '/admin/'
-LOGOUT_REDIRECT_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'  # Redirect to booking admin dashboard after login
+LOGOUT_REDIRECT_URL = '/admin-django/'  # Return to Django admin after logout
