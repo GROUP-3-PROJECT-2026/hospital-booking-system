@@ -10,7 +10,8 @@ contact_validator = RegexValidator(
 
 class Patient(models.Model):
     """Stores basic demographic information for a patient."""
-    name = models.CharField(max_length=100, verbose_name="Patient Name")
+    namels
+    = models.CharField(max_length=100, verbose_name="Patient Name")
     age = models.IntegerField(verbose_name="Age")
     contact_number = models.CharField(
         max_length=10, 
