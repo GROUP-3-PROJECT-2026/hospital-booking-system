@@ -15,8 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.shortcuts import redirect
+
+def root_redirect(request):
+    """Redirect root URL based on authentication status."""
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            return redirect('admin_dashboard')
+        return redirect('dashboard')
+    return redirect('login')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', root_redirect, name='root'),
+    path('', include('users.urls')),
+    path('', include('core.urls')),
 ]

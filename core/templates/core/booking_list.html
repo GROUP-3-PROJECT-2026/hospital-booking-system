@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings - Hospital Booking System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                <i class="bi bi-calendar-check"></i> My Bookings
+            </h1>
+            <a href="{% url 'create_booking' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Booking
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Test Type</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Hospital</th>
+                                    <th>Created At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in bookings %}
+                                <tr>
+                                    <td>{{ booking.patient.name }}</td>
+                                    <td>{{ booking.test.name }}</td>
+                                    <td>{{ booking.date }}</td>
+                                    <td>{{ booking.time }}</td>
+                                    <td>{{ booking.hospital }}</td>
+                                    <td>{{ booking.created_at|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'update_booking' booking.id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        <a href="{% url 'delete_booking' booking.id %}" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle"></i> No bookings found. 
+                        <a href="{% url 'create_booking' %}">Create your first booking</a>.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

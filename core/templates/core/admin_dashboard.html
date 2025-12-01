@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Admin Dashboard - Hospital Booking System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-shield-check"></i> Admin Dashboard
+        </h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-search"></i> Search Bookings
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="search" 
+                               value="{{ search_query }}" 
+                               placeholder="Search by patient name or test type...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+                {% if search_query %}
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mt-2">
+                        <i class="bi bi-x-circle"></i> Clear Search
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> All Bookings
+                </h5>
+                <span class="badge bg-primary">{{ bookings.count }} total</span>
+            </div>
+            <div class="card-body">
+                {% if bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Patient Name</th>
+                                    <th>Test Type</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Hospital</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in bookings %}
+                                <tr>
+                                    <td>{{ booking.user.get_full_name|default:booking.user.username }}</td>
+                                    <td>{{ booking.patient.name }}</td>
+                                    <td>{{ booking.test.name }}</td>
+                                    <td>{{ booking.date }}</td>
+                                    <td>{{ booking.time }}</td>
+                                    <td>{{ booking.hospital }}</td>
+                                    <td>{{ booking.created_at|date:"M d, Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No bookings found.
+                        {% if search_query %}
+                            Try a different search term.
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
